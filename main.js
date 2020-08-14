@@ -30,25 +30,53 @@ function promiseAll() {
 }
 promiseAll()
 
+var promises = []
 function pokeIndexInput() {
     var poke_container = document.querySelector('.poke-container')
     var inputOneValue = document.querySelector('#indexOne').value
     var inputTwoValue = document.querySelector('#indexTwo').value
     var inputThreeValue = document.querySelector('#indexThree').value
-    
-    if(inputOneValue && inputTwoValue && inputThreeValue) {
+
+    if (inputOneValue && inputTwoValue && inputThreeValue) {
         // var searchPromise = new Promise((resolve, reject) => {
-            var promises = []
-            fetch(link + inputOneValue)
-                .then(pokeRaw => pokeRaw.json())
-                .then(poke => promises.push(poke/*pokeRaw.json()*/));
-                // .then()
-                // .then(poke => console.log(poke)));
-            console.log(promises);
-        // })
+        fetch(link + inputOneValue)
+            .then(pokeRaw => pokeRaw.json())
+            .then(poke => {
+                promises.push(poke)
+                setPokeView(poke)
+                return fetch(link + inputTwoValue)
+            })
+            .then(pokeRaw => pokeRaw.json())
+            .then(poke => {
+                promises.push(poke)
+                setPokeView(poke)
+                return fetch(link + inputThreeValue)
+            })
+            .then(pokeRaw => pokeRaw.json())
+            .then(poke => {
+                promises.push(poke)
+                setPokeView(poke)
+            })
+            .then()
+            .catch(err => console.error('Something bad happened with your link: ' + err))
     } else {
         alert('all required')
     }
+}
+
+function setPokeView(obj) {
+    pokeContainer = document.querySelector('.poke-container'); // parent
+    pokeCard = document.createElement('div');
+    pokeCard.className = 'poke-card'
+    pokeCardTitle = document.createElement('h2')
+    pokeCardTitle.className = 'poke-name'
+    pokeCardTitle.innerHTML = obj.name
+    pokeCardImg = document.createElement('img')
+    pokeCardImg.setAttribute('src', obj.sprites.front_default)
+    pokeCard.appendChild(pokeCardTitle)
+    pokeCard.appendChild(pokeCardImg)
+    pokeContainer.appendChild(pokeCard)
+
 }
 // pokeIndexInput()
 
