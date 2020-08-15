@@ -1,61 +1,31 @@
-var endpointsArr = []
-endpointsArr.push('some String')
-var randomNum = function () {
-    console.log(endpointsArr.length);
-    return Math.floor(Math.random() * endpointsArr.length) + 1
-}
-function populateArray() {
-    for (let i = 1; i <= 10; i++) {
-        endpointsArr.push(i);
-    }
-}
-populateArray()
-var link = 'https://pokeapi.co/api/v2/pokemon/'
-function raceFetch(endpoint) {
+const POKEMON_API = 'https://pokeapi.co/api/v2/pokemon/';
+var variableGlobal = 123;
 
-}
-var fetch1 = fetch(link + endpointsArr[randomNum()]).then(poke => poke.json())//.then(msg => console.log(`${msg.id} ${msg.name}`))
-var fetch2 = fetch(link + endpointsArr[randomNum()]).then(poke => poke.json())//.then(msg => console.log(`${msg.id} ${msg.name}`))
-var fetch3 = fetch(link + endpointsArr[randomNum()]).then(poke => poke.json())//.then(msg => console.log(`${msg.id} ${msg.name}`))
+function findPokemonById() {
+    
+    let indexPokemonOne = document.querySelector('#indexOne').value
+    let indexPokemonTwo = document.querySelector('#indexTwo').value
+    let indexPokemonThree = document.querySelector('#indexThree').value
 
-function promiseRace() {
-    Promise.race([fetch1, fetch2, fetch3]).then(msg => console.log(msg))
-}
-// promiseRace()
+    if (indexPokemonOne && indexPokemonTwo && indexPokemonThree) {
+        
+        let pokeContainer = document.querySelector('.poke-container'); // parent
+        pokeContainer.innerHTML = "";
 
-function promiseAll() {
-    Promise.all([fetch1, fetch2, fetch3])
-        .then(msg => console.log('success'))
-        .catch(err => console.error('String cannot be an index'))
-}
-promiseAll()
-
-var promises = []
-function pokeIndexInput() {
-    var poke_container = document.querySelector('.poke-container')
-    var inputOneValue = document.querySelector('#indexOne').value
-    var inputTwoValue = document.querySelector('#indexTwo').value
-    var inputThreeValue = document.querySelector('#indexThree').value
-
-    if (inputOneValue && inputTwoValue && inputThreeValue) {
-        // var searchPromise = new Promise((resolve, reject) => {
-        fetch(link + inputOneValue)
+        fetch(POKEMON_API + indexPokemonOne)
             .then(pokeRaw => pokeRaw.json())
             .then(poke => {
-                promises.push(poke)
-                setPokeView(poke)
-                return fetch(link + inputTwoValue)
+                drawPokemon(poke)
+                return fetch(POKEMON_API + indexPokemonTwo)
             })
             .then(pokeRaw => pokeRaw.json())
             .then(poke => {
-                promises.push(poke)
-                setPokeView(poke)
-                return fetch(link + inputThreeValue)
+                drawPokemon(poke)
+                return fetch(POKEMON_API + indexPokemonThree)
             })
             .then(pokeRaw => pokeRaw.json())
             .then(poke => {
-                promises.push(poke)
-                setPokeView(poke)
+                drawPokemon(poke)
             })
             .then()
             .catch(err => console.error('Something bad happened with your link: ' + err))
@@ -64,21 +34,25 @@ function pokeIndexInput() {
     }
 }
 
-function setPokeView(obj) {
-    pokeContainer = document.querySelector('.poke-container'); // parent
-    pokeCard = document.createElement('div');
-    pokeCard.className = 'poke-card'
-    pokeCardTitle = document.createElement('h2')
+function drawPokemon(pokemon) {    
+    
+    let pokeCardTitle = document.createElement('h2')
     pokeCardTitle.className = 'poke-name'
-    pokeCardTitle.innerHTML = obj.name
-    pokeCardImg = document.createElement('img')
-    pokeCardImg.setAttribute('src', obj.sprites.front_default)
+    pokeCardTitle.innerHTML = pokemon.name
+    
+    let pokeCardImg = document.createElement('img')
+    pokeCardImg.setAttribute('src', pokemon.sprites.front_default)
+    
+    let pokeCard = document.createElement('div');
+    pokeCard.className = 'poke-card'
     pokeCard.appendChild(pokeCardTitle)
     pokeCard.appendChild(pokeCardImg)
+    
+    let pokeContainer = document.querySelector('.poke-container'); // parent
     pokeContainer.appendChild(pokeCard)
 
 }
 // pokeIndexInput()
 
 var searchBtn = document.querySelector('#searchBtnId')
-searchBtn.addEventListener('click', pokeIndexInput)
+searchBtn.addEventListener('click', findPokemonById)
